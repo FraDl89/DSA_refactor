@@ -1,0 +1,7 @@
+numpy
+scipy
+pyDOE
+networkx
+matplotlib
+typing
+pyswarm
