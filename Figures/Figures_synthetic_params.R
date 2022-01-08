@@ -11,9 +11,9 @@ highlight <- function(x, value, col.value, col=NA, ...){
   hist(x, col=cols, ...)
 }
 colnames<-c('rho','beta','mean','var')
-li <- read.table('/home/fra/Projects/DSA_inference/Synthetic_data/li.txt',col.names=colnames)
-lr <- read.table('/home/fra/Projects/DSA_inference/Synthetic_data/lr.txt',col.names=colnames)
-li_lr <- read.table('/home/fra/Projects/DSA_inference/Synthetic_data/li_lr.txt',col.names=colnames)
+li <- read.table('../Synthetic_data/li.txt',col.names=colnames)
+lr <- read.table('../Synthetic_data/lr.txt',col.names=colnames)
+li_lr <- read.table('../Synthetic_data/li_lr.txt',col.names=colnames)
 
 len = length(head(li$rho,1000))
 
@@ -82,9 +82,6 @@ vara <- data.frame(Likelihood = c(rep("value_1",len), rep("value_2",len), rep("v
 ggplot(mea,aes(x=value,fill=Likelihood )) + geom_histogram(alpha=0.6, position = 'identity',biwidth=0.1) +
   scale_fill_manual(values=c("#0C7EF5","#41F518", "#F5A318"),labels=c(bquote('\u2113'[i]), bquote('\u2113'[r]), 
                                                                       bquote('\u2113'[i]~+~'\u2113'[r])))+
-  #scale_color_hue(labels = c(TeX(r'($\\ell_i$)'), "T888","mannaggia la madonna"))+
-  labs(x = 'mean'), y = "density")+     
-  # geom_density(aes(x=li$rho, y=..density..),size=2,colour=(rgb(163/255,35/255,142/255))) + 
   theme(text=element_text(size=14, family="LM Roman 10"), axis.line = element_line(colour = rgb(163/255,35/255,142/255), 
                                                                                    size = 1, linetype = "solid", ),  panel.border = element_blank(),
         panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = c(0.8,0.6))+  

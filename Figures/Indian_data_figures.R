@@ -6,18 +6,17 @@ library(patchwork)
 
 colnames<-c('day','cases')
 
-dataset <- read.table("/home/fra/Projects/DSA_inference/India/COVID19_timeseries_India_1227.csv", sep=',', header=TRUE)
+dataset <- read.table("../India/Data/COVID19_timeseries_India_1227.csv", sep=',', header=TRUE)
 
-real_cases <- read.table("/home/fra/Projects/DSA_inference/India/infected_cases.txt",col.names=colnames)
+real_cases <- read.table("../India/Data/infected_cases.txt",col.names=colnames)
 
-real_rec <- read.table("/home/fra/Projects/DSA_inference/India/recovered_recoveries.txt",col.names=colnames)
+real_rec <- read.table("../India/Data/recovered_recoveries.txt",col.names=colnames)
 library(gghighlight)
 
 options(stringsAsFactors = FALSE)
 dataset$Date <- as.Date(dataset$Date_YMD, "%Y-%m-%d")
 
 ggplot(dataset, aes(x=Date),color='black')  +
-  labs(x = 'time (days)', y = "daily new cases")+     
   geom_point(aes(y=Daily.Confirmed),size=2,colour=(rgb(163/255,35/255,142/255))) + 
   gghighlight(Date>="2021-02-15",Date<="2021-07-01",unhighlighted_params = list(color='black'))+
   theme_bw()+
@@ -25,8 +24,8 @@ ggplot(dataset, aes(x=Date),color='black')  +
                                                                                    size = 1, linetype = "solid", ),  panel.border = element_blank(),
         panel.grid.major = element_blank(), panel.grid.minor = element_blank())+  
   scale_y_continuous(expand = expansion(mult = c(0, .1)))+
-
-
+  labs(x = 'time (days)', y = "daily new cases")     
+  
 
 
 
@@ -47,7 +46,7 @@ scale_gam_I = 1.57537281e+00
 
 max_height_I <- max(dgamma(x_lower:x_upper, shape = shape_gam_I, scale=scale_gam_I, log = FALSE))+0.03
 
-
+#Pdfs
 
 ggplot(data.frame(x = c(x_lower, x_upper)), aes(x = x)) + xlim(x_lower, x_upper) + 
   ylim(0, max_height_I) +
@@ -66,16 +65,18 @@ ggplot(data.frame(x = c(x_lower, x_upper)), aes(x = x)) + xlim(x_lower, x_upper)
 
 library(gridExtra)
 
+#Confidence intervals
+
 day = head(day, T_f)
 day = tail(day, -6)
 colnames=c("t",'two','five','nine')
 
-conf_int_i = read.table("/home/fra/Projects/DSA_inference/India/infected_confidence_intervals.txt",col.names=colnames)
-conf_int_r = read.table("/home/fra/Projects/DSA_inference/India/recovered_confidence_intervals.txt",col.names=colnames)
+conf_int_i = read.table("../India/Data/infected_confidence_intervals.txt",col.names=colnames)
+conf_int_r = read.table("../India/Data/recovered_confidence_intervals.txt",col.names=colnames)
 
 colnames=c("t",'i')
-cases = read.table("/home/fra/Projects/DSA_inference/India/infected_cases.txt",col.names=colnames)
-recoveries = read.table("/home/fra/Projects/DSA_inference/India/recovered_recoveries.txt",col.names=colnames)
+cases = read.table("../India/Data/infected_cases.txt",col.names=colnames)
+recoveries = read.table("../India/Data/recovered_recoveries.txt",col.names=colnames)
 
 
 pp1 <- ggplot(conf_int_i, aes(x=t,y=five))  + geom_line(aes(color='conf'))+

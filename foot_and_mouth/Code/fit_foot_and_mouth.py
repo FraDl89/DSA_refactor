@@ -10,17 +10,27 @@ Created on Mon Feb  1 10:30:09 2021
 
 import numpy as np
 import matplotlib.pyplot as plt
-from Likelihood import log_likelihood_models
 #from untitled0 import log_likelihood_models
 import scipy.stats as stats
-from PDE_solver import SIR_PDEroutine
 import random
 from pyDOE import lhs
+
+import sys
+sys.path.append('../../')
+
+from Likelihood import log_likelihood_models
+from PDE_solver import SIR_PDEroutine
+
+
+'''
+This code is used to fit the real dataset from the foot and mouth epidemics.
+The processed_time_daily_cases.txt might be available upon reasonable request
+'''
 
 if __name__=="__main__":
      
     np.random.seed(1404) #Initialize random seed for reproducibility
-    processed_time_cases = 'foot_and_mouth/processed_time_daily_cases.txt'  #Folder with FMD data
+    processed_time_cases = '../Data/processed_time_daily_cases.txt'  #Folder with FMD data
     
     #Cases we are interested in
     plt.figure()        
@@ -153,8 +163,8 @@ if __name__=="__main__":
     print(rho_0)
     
     
-    #np.savetxt('/home/fra/Projects/DSA_inference/foot_and_mouth/fit_empirical_density_foot_and_mouth.txt', np.c_(pde.tgrids[1:],empirical_density))
-    #np.savetxt('/home/fra/Projects/DSA_inference/foot_and_mouth/empirical_density_foot_and_mouth.txt', np.c_(day,denseval))
+    #np.savetxt('fit_empirical_density_foot_and_mouth.txt', np.c_(pde.tgrids[1:],empirical_density))
+    #np.savetxt('empirical_density_foot_and_mouth.txt', np.c_(day,denseval))
 
     
     '''

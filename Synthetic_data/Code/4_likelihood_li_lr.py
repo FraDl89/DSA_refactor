@@ -7,13 +7,13 @@ Created on Tue Oct 13 13:48:27 2020
 """
 import numpy as np
 import sys
-from likelihood import log_likelihood_models_simple as log_likelihood_models
 import scipy.stats as stats
-from PDE_solver import SIR_PDEroutine
 from scipy.optimize import minimize
 
 from pyDOE import lhs
+sys.path.append('../../')
 
+from Likelihood import log_likelihood_models
 
 
 if __name__ == "__main__":

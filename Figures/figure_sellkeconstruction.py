@@ -6,15 +6,20 @@ Created on Thu Jan 28 15:28:39 2021
 @author: fra
 """
 
-from Selkealgo import Sellke_algo
 import numpy as np
 import matplotlib.pyplot as plt
 import myPlotConfigs
 import random
 from scipy import stats
 from matplotlib.text import OffsetFrom
+import sys
+sys.path.append('../')
 
+from Selkealgo import Sellke_algo
 
+'''
+This produces the figure to explain how the sellke construction works
+'''
 if __name__=="__main__":
     N = 500
     beta =1.3
@@ -118,15 +123,15 @@ if __name__=="__main__":
     sns.despine()
     
     
-    ax1.spines['bottom'].set_color('#dddddd')
-    ax1.spines['top'].set_color('#dddddd') 
-    ax1.spines['right'].set_color('red')
-    ax1.spines['left'].set_color('red')
+    ax1.spines['bottom'].set_color('#A3238E')
+    ax1.spines['top'].set_color('#A3238E') 
+    ax1.spines['right'].set_color('#A3238E')
+    ax1.spines['left'].set_color('#A3238E')
 
-    ax2.spines['bottom'].set_color('#dddddd')
-    ax2.spines['top'].set_color('#dddddd') 
-    ax2.spines['right'].set_color('red')
-    ax2.spines['left'].set_color('red')
+    ax2.spines['bottom'].set_color('#A3238E')
+    ax2.spines['top'].set_color('#A3238E') 
+    ax2.spines['right'].set_color('#A3238E')
+    ax2.spines['left'].set_color('#A3238E')
 
     plt.savefig("sellkeconstruction.eps",format='eps')
     '''

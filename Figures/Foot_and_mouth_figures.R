@@ -5,12 +5,13 @@ library(extrafont)
 library(patchwork)
 
 colnames<-c('day','cases')
-real_cases <- read.table("/home/fra/Projects/DSA_inference/foot_and_mouth/processed_time_daily_cases.txt",col.names=colnames)
-empirical <- read.table('/home/fra/Projects/DSA_inference/foot_and_mouth/empirical_density_foot_and_mouth.txt',col.names=colnames)
-fitempirical <- read.table('/home/fra/Projects/DSA_inference/foot_and_mouth/fit_empirical_density_foot_and_mouth.txt',col.names=colnames)
+real_cases <- read.table("../foot_and_mouth/Data/processed_time_daily_cases.txt",col.names=colnames)
+empirical <- read.table('../foot_and_mouth/Data/empirical_density_foot_and_mouth.txt',col.names=colnames)
+fitempirical <- read.table('../foot_and_mouth/Data/fit_empirical_density_foot_and_mouth.txt',col.names=colnames)
 library(gghighlight)
 
 
+#Cases
 ggplot(real_cases, aes(x=day),color='black')  +
   labs(x = 'time (days)', y = "daily new cases")+     
   geom_point(aes(y=cases),size=2,colour=(rgb(163/255,35/255,142/255))) + 
@@ -24,6 +25,7 @@ ggplot(real_cases, aes(x=day),color='black')  +
 
 
 
+#Cases fitted (not published)
 
 gg<- ggplot(empirical, aes(x=day))  +
   labs(x = 'time', y = "empirical density")+     
@@ -49,6 +51,7 @@ scale_gam = 1.08327439e+01/(4.97839683e+00)
 max_height <- max(dweibull(x_lower:x_upper, shape = 2.13623063e+00, scale=4.75098558e+00, log = FALSE))+0.1
 
 
+#PDFs
 
 ggplot(data.frame(x = c(x_lower, x_upper)), aes(x = x)) + xlim(x_lower, x_upper) + 
   ylim(0, max_height) +
@@ -86,14 +89,14 @@ differences=mov_avg-tail(cases, -6)
 var_diff= var(differences)
 
 colnames<-c('time','lower','central','upper')
-conf_intervals <- read.table('/home/fra/Projects/DSA_inference/foot_and_mouth/inflted_confidence_intervals.txt',col.names=colnames)
+conf_intervals <- read.table('../foot_and_mouth/Data/inflted_confidence_intervals.txt',col.names=colnames)
 
 
 centralpoint= (conf_intervals$lower + conf_intervals$upper)/2
 distance= (conf_intervals$upper - conf_intervals$lower)*sqrt(var_diff)
 
 
-
+#Inflated confidence interval
 ggplot(conf_intervals, aes(x=time,y=central)) + geom_line(aes(color='conf')) +
   labs(x = 'days since 2001-02-04', y ='cases')+     
   theme_bw()+

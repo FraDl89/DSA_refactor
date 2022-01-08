@@ -6,15 +6,15 @@ Created on Fri Dec 24 13:35:06 2021
 @author: fra
 """
 import numpy as np
-from likelihood_2 import log_likelihood_models
 import scipy.stats as stats
-from PDE_solver import SIR_PDEroutine
 import random
 import sys
-import pandas as pd
-import matplotlib.pyplot as plt
 
-import warnings
+
+sys.path.append('../../')
+from Likelihood import log_likelihood_models
+from PDE_solver import SIR_PDEroutine
+
 
 if __name__=="__main__":
     
@@ -60,8 +60,8 @@ if __name__=="__main__":
          x[0]=x[1]
          return x
     
-    time_I_total = np.load('India/India_infected.npy')
-    time_R_total = np.load('India/India_rec.npy')
+    time_I_total = np.load('../Data/India_infected.npy')
+    time_R_total = np.load('../Data/India_rec.npy')
     
     time_I_extended = np.sort(time_I_total)
     time_R_extended = np.sort(time_R_total)
@@ -100,4 +100,4 @@ if __name__=="__main__":
     
     result = ll.minimize_likelihood(np.array([1e-4,1,1,3,2]), np.array([1e-2,10,6,12, 25]), maxiter=20,swarmsize=100)
 
-    np.savetxt("India/Bootstrap/likelihood_%d.txt"%seed,result[0],newline=" ")
+    np.savetxt("../Bootstrap/likelihood_%d.txt"%seed,result.x,newline=" ")
