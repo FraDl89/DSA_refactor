@@ -67,7 +67,7 @@ if __name__=="__main__":
     
     big_matrix=np.zeros((500,1600-1))
     #matrix_ij refers to the bootstrap extraction i, time j
-    
+    R_0distr = np.zeros(500)
     for n in range(1,501):
 
            
@@ -94,8 +94,16 @@ if __name__=="__main__":
         rho_0 = result_x[0]*N_eff
          
         big_matrix[n-1]=-np.diff(X)/pde.dx *N_eff
-        #plt.plot(pde.tgrids[1:],-np.diff(X)/pde.dx *N_eff, alpha=0.6)
+
+        x=np.linspace(0, 50, 2000)
+        a = result_x[3]**2/result_x[4]
+        scale = result_x[4]/result_x[3]        
         
+        #Compute R_0 as integral of prob of being infectious at time t times rate of infection at time t in dt
+        prob_infectious=1-stats.gamma.cdf(x,a=a,scale=scale)
+        rate_transmission=inf_distr(x, *[result_x[1], result_x[2]])
+        R_0distr[n-1]= np.sum(rate_transmission*prob_infectious*50/2000)
+               
        
         
        
@@ -161,6 +169,7 @@ if __name__=="__main__":
     plt.show()
     
     #Save the file to create the figure
-    #np.savetxt("foot_and_mouth/inflted_confidence_intervals.txt",np.c_[pde.tgrids[1:],two_five,fifty,nine_five])
-    
+    #np.savetxt("../Data/inflted_confidence_intervals.txt",np.c_[pde.tgrids[1:],two_five,fifty,nine_five])
+    #np.savetxt("../Data/R_0distr.txt",R_0distr)
+   
     

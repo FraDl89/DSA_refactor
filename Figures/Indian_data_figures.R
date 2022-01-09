@@ -27,6 +27,19 @@ ggplot(dataset, aes(x=Date),color='black')  +
   labs(x = 'time (days)', y = "daily new cases")     
   
 
+#R_0 plots
+r_0 <- read.table('../India/Data/R_0_distr.txt', col.names='r0')
+
+ggplot(r_0, aes(x=r0))+
+  geom_histogram(alpha=0.6,fill='#F5A318',color="#F5A318")+
+  theme_bw()+
+  theme(text=element_text(size=12, family="LM Roman 10"),axis.line = element_line(colour = rgb(163/255,35/255,142/255), 
+                                                                                  size = 1, linetype = "solid") ,panel.border = element_blank(),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = c(0.8,0.6))+  
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  scale_x_continuous(expand = expansion(mult = c(0, .1)), breaks = scales::pretty_breaks(n = 5))+
+  labs(x = TeX(r'($R_0$)'), y='ćounnts')
+
 
 
 result_x <- c(4.06914629e-04, 2.81346094e+00, 1.57537281e+00, 5.69340232e+00,

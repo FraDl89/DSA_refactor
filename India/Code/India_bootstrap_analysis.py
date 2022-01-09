@@ -117,6 +117,8 @@ if __name__=="__main__":
  
     #matrix_ij refers to the bootstrap extraction i, time j of the pde
        
+    R_0distr=np.zeros(500)
+    
     for n in range(1,501):
 
             
@@ -145,6 +147,14 @@ if __name__=="__main__":
         
         big_matrix_R[n-1] =  -(np.diff(Y)+ np.diff(X))/pde.dx *N_eff
 
+
+        x=np.linspace(0, 50, 2000)
+        a = result_x[3]**2/result_x[4]
+        scale = result_x[4]/result_x[3]        
+        
+        prob_infectious=1-stats.gamma.cdf(x,a=a,scale=scale)
+        rate_transmission=stats.gamma.pdf(x,a=result_x[1], scale=result_x[2])/(1- stats.gamma.cdf(x,a=result_x[1], scale=result_x[2]))       
+        R_0distr[n-1]= np.sum(rate_transmission*prob_infectious*50/2000)
        
         
        
@@ -157,6 +167,8 @@ if __name__=="__main__":
     
     np.savetxt("../Data/infected_cases.txt",np.c_[day,infected])
     np.savetxt("../Data/recovered_recoveries.txt",np.c_[day,recov_deceased])
+
+    np.savetxt("../Data/R_0_distr.txt", np.c_[R_0distr])
     
     '''
     #Not moving average and not inflated conf int
