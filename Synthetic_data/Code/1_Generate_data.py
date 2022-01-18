@@ -6,10 +6,7 @@ Created on Fri May  7 09:15:37 2021
 @author: fra
 """
 import numpy as np
-import gc
-import pickle
 import scipy.stats as stats
-import scipy.special
 import sys
 from Selkealgo import Sellke_algo
 

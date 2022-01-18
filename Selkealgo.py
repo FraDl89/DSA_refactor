@@ -123,9 +123,9 @@ def Sellke_algo(tau,I_0,N,T_f,T_rec,showplot=True,return_full=True):
             idx = (np.abs(time - t_grid )).argmin()
             average_sellke_I[index] += I[idx]
             average_sellke_S[index] += S[idx]  
-        return time,I,S,R,times_to_sample,average_sellke_I,average_sellke_S
+        return np.array(time),np.array(I),np.array(S),np.array(R),times_to_sample,average_sellke_I,average_sellke_S
     else:
-        return time,I,S,R
+        return np.array(time),np.array(I),np.array(S),np.array(R)
 
 
 
