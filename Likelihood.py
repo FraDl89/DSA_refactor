@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Thu Sep  3 09:16:00 2020
 
@@ -13,7 +11,8 @@ from pyDOE import lhs
 from PDE_solver import SIR_PDEroutine
 from scipy.optimize import minimize
 from scipy.signal import convolve
-from pyswarm import pso
+
+import pyswarms as ps
 
 
 
@@ -239,26 +238,22 @@ class log_likelihood_models():
             
             gt = convolve(ft,self.rec_times)[1:len(self.pdeObj_1.tgrids)]*self.dx
             gt = gt/(np.sum(gt)*self.dx)
-            
+            #print(min(ft),max(ft), min(gt), max(gt))
             loggt = np.log(gt)
             res=interp1d(self.pdeObj_1.tgrids[1:], loggt)(recov_times[recov_times>self.pdeObj_1.tgrids[1]]).sum()
             return res
-
-
 
     def evaluate_likelihood(self,x):
             self.pdeObj_1,self.rec_times = self.pde(x)
             self.X,self.Y, self.Yts=self.pdeObj_1.finDiffUpdate(Yts=True,initial_cond=self.initial_cond)
             self.dx = self.pdeObj_1.dx
                        
-            return -(self.ll_I(x) + self.ll_R1(x) +self.ll_R2(x))        
+            return -(self.ll_I(x) + self.ll_R1(x) +self.ll_R2(x))    
 
 
 
-
-    def minimize_likelihood(self,lb,ub,use_pyswarm=True, maxiter=100,swarmsize=100):
+    def minimize_likelihood(self,lb,ub,use_pyswarm=True, maxiter=100,swarmsize=100, c1=1.7, c2=1.7, w=0.6):
         '''
-
         Parameters
         ----------
         lb : array like,float
@@ -276,20 +271,32 @@ class log_likelihood_models():
         '''
   
 
-        def neg_log_likelihood(x):
-            self.pdeObj_1,self.rec_times = self.pde(x)
-            self.X,self.Y, self.Yts=self.pdeObj_1.finDiffUpdate(Yts=True,initial_cond=self.initial_cond)
-            self.dx = self.pdeObj_1.dx
-                       
-            return -(self.ll_I(x) + self.ll_R1(x) +self.ll_R2(x))
+        def neg_log_likelihood(u):
 
+            results = np.zeros(len(u))
+            for index,x in enumerate(u):
+  
+                self.pdeObj_1,self.rec_times = self.pde(x)
+                self.X,self.Y, self.Yts=self.pdeObj_1.finDiffUpdate(Yts=True,initial_cond=self.initial_cond)
+                self.dx = self.pdeObj_1.dx
+                results[index]=-(self.ll_I(x) + self.ll_R1(x) +self.ll_R2(x))
+          
+            return results
+            
         if use_pyswarm==True:
-               xopt,fopt = pso(neg_log_likelihood,lb,ub,maxiter=maxiter,swarmsize=swarmsize,minfunc=1e-4, debug=False)
-               bounds = np.array([(lb[i],ub[i]) for i in range(len(lb))])
-               print(xopt,fopt) 
-               res=minimize(neg_log_likelihood, xopt, bounds = bounds, options={'maxiter':550,},method='TNC')
-               #fun = shgo(neg_log_likelihood, bounds, options={'ftol':1e-5})
-               return res
+            options = {'c1':c1, 'c2': c2, 'w':w}
+            bounds = np.array([(lb[i],ub[i]) for i in range(len(lb))])
+   
+            optimizer = ps.single.GlobalBestPSO(n_particles=swarmsize, dimensions=len(lb), options=options,bounds=[lb,ub])
+
+            fopt, xopt = optimizer.optimize(neg_log_likelihood, iters=maxiter)
+
+            #fopt, xopt = pso(neg_log_likelihood,lb,ub,maxiter=maxiter,swarmsize=swarmsize,minfunc=1e-4, debug=False)
+            
+            #bounds = np.array([(lb[i],ub[i]) for i in range(len(lb))])
+            #res=minimize(neg_log_likelihood, xopt, bounds = bounds, options={'maxiter':550,},method='TNC')
+            #fun = shgo(neg_log_likelihood, bounds, options={'ftol':1e-5})
+            return xopt, fopt
         else:
             bounds = np.array([(lb[i],ub[i]) for i in range(len(lb))])
             #Latin hypercube sampling to generate a uniform distribution of points
@@ -311,9 +318,3 @@ class log_likelihood_models():
             res = minimize(neg_log_likelihood, x, bounds = bounds, options={'maxiter':200,},method='TNC')
 
         return res
-        
-
-    #np.save("files/likelihood_incomplete_"+CIdistName+"_"+recovDistName+"_%d.npy"%(seed),result)
-       
-
-

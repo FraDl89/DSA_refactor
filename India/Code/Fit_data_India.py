@@ -166,7 +166,7 @@ if __name__=="__main__":
                               T=day[-1], infect_times=time_I_extended, recov_times=time_R_extended, hazard_inf_par=2,rec_parms=2)
     
 
-    result = ll.minimize_likelihood(np.array([1e-4,1,1,3,2]), np.array([1e-2,10,6,12, 25]), maxiter=50,swarmsize=500)
+    result = ll.minimize_likelihood(np.array([1e-4,1,1,3,2]), np.array([1e-2,10,6,12, 25]), maxiter=100,swarmsize=500)
     
     #print(result)
     
@@ -174,7 +174,7 @@ if __name__=="__main__":
     #result_x=[4.06914629e-04, 2.81346094e+00, 1.57537281e+00, 5.69340232e+00,
     #        1.89918160e+01]
     # 26642.522743303794)
-    result_x=result.x
+    result_x=result[0]
     
     pde= SIR_PDEroutine(result_x[0], CIdist=inf_distr, CIdistParms=[result_x[1], result_x[2]],\
                               recovDist=rec_haz, recovDistParms=[result_x[3],result_x[4]],\

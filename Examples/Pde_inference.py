@@ -86,10 +86,12 @@ if __name__=="__main__":
             tol = 1e-10
             #Basically: use de l'hopital when the ratio becomes 0/0
             #Otherwise go with definition. This regularises a lot the numerics
-            
-            x = np.where(stats.gamma.cdf(u,a=a,scale=scale)>1-tol,
-                         1/scale - (a-1)/u,
-                         stats.gamma.pdf(u,a=a,scale=scale)/(1- stats.gamma.cdf(u,a=a,scale=scale)))
+            x=np.zeros_like(u)
+            bad_indexes=stats.gamma.cdf(u,a=a,scale=scale)>1-tol
+            x[bad_indexes]=1/scale - (a-1)/u[bad_indexes]
+            x[~bad_indexes]= stats.gamma.pdf(u[~bad_indexes],a=a,scale=scale)/(1- stats.gamma.cdf(u[~bad_indexes],a=a,scale=scale))
+   
+     
             return x   
         def inf_distr(u,*CIdistParms):
             a = CIdistParms[0]
@@ -141,10 +143,11 @@ if __name__=="__main__":
             tol = 1e-10
             #Basically: use de l'hopital when the ratio becomes 0/0
             #Otherwise go with definition. This regularises a lot the numerics
-            
-            x = np.where(stats.gamma.cdf(u,a=a,scale=scale)>1-tol,
-                         1/scale - (a-1)/u,
-                         stats.gamma.pdf(u,a=a,scale=scale)/(1- stats.gamma.cdf(u,a=a,scale=scale)))
+            x=np.zeros_like(u)
+            bad_indexes=stats.gamma.cdf(u,a=a,scale=scale)>1-tol
+            x[bad_indexes]=1/scale - (a-1)/u[bad_indexes]
+            x[~bad_indexes]= stats.gamma.pdf(u[~bad_indexes],a=a,scale=scale)/(1- stats.gamma.cdf(u[~bad_indexes],a=a,scale=scale))
+   
             return x
         rec_parms=2
         
@@ -201,13 +204,13 @@ if __name__=="__main__":
                           T=T_f, infect_times=times_of_infections,
                           recov_times=times_of_recovery,
                           hazard_inf_par=hazard_inf_par,rec_parms=rec_parms)
-    result = ll.minimize_likelihood(np.array(args.lower_bounds), np.array(args.upper_bounds))
+    result = ll.minimize_likelihood(np.array(args.lower_bounds), np.array(args.upper_bounds), maxiter=100,swarmsize=100)
          
     
-    print(result.x)
     
-    pde = SIR_PDEroutine(result.x[0], CIdist=inf_haz, CIdistParms=[result.x[1]],\
-                              recovDist=rec_haz, recovDistParms=[result.x[2], result.x[3]],\
+    parameters=result[0]
+    pde = SIR_PDEroutine(parameters[0], CIdist=inf_haz, CIdistParms=[parameters[1]],\
+                              recovDist=rec_haz, recovDistParms=[parameters[2], parameters[3]],\
                                   nTgrid=grids, nUgrid=grids, T=T_f)
     #Initial condition in this case should be a delta in 0.
     initial_condition=np.zeros_like(pde.tgrids)
@@ -215,8 +218,8 @@ if __name__=="__main__":
     #Solve the PDE
     S_mle,I_mle=pde.finDiffUpdate(intiial_condition=initial_condition)         
     
-    np.savetxt("pde_{}.csv".format(args.output_files), np.c_[pde.tgrids,S_mle,I_mle],header="time,S,I", delimiter=',')
-    np.savetxt("parameters_{}.csv".format(args.output_files), result.x,header="rho,infection_parameters,recovery_parameters", delimiter=',')
+    np.savetxt("{}_pde.csv".format(args.output_files), np.c_[pde.tgrids,S_mle,I_mle],header="time,S,I", delimiter=',')
+    np.savetxt("{}_parameters.csv".format(args.output_files), result[0],header="rho,infection_parameters,recovery_parameters", delimiter=',')
     
     x=np.linspace(0,T_f,grids)
     
@@ -226,7 +229,7 @@ if __name__=="__main__":
     plt.ylabel('I(t)')
     plt.xlim(0)
     plt.ylim(0)
-    plt.savefig("I_fig_{}.pdf".format(args.output_files), format='pdf')
+    plt.savefig("{}_I_fig.pdf".format(args.output_files), format='pdf')
     
     plt.close()
     
@@ -236,27 +239,27 @@ if __name__=="__main__":
     plt.ylabel('S(t)')
     plt.xlim(0)
     plt.ylim(0)    
-    plt.savefig("S_fig_{}.pdf".format(args.output_files), format='pdf')    
+    plt.savefig("{}_S_fig.pdf".format(args.output_files), format='pdf')    
     plt.close()    
     
     t=np.linspace(0,30,600)
     plt.figure(figsize=(6,6))
-    plt.plot(t,inf_distr(t,*result.x[1:1+hazard_inf_par]), color='r')
+    plt.plot(t,inf_distr(t,*parameters[1:1+hazard_inf_par]), color='r')
     plt.xlabel('time')
     plt.ylabel('pdf')
-    plt.title("Contact interval distribution, params:{}".format(result.x[1:1+hazard_inf_par]))
+    plt.title("Contact interval distribution, params:{}".format(parameters[1:1+hazard_inf_par]))
     plt.xlim(0)
     plt.ylim(0)    
-    plt.savefig("contact_interval_fig_{}.pdf".format(args.output_files), format='pdf')    
+    plt.savefig("{}_contact_interval_fig.pdf".format(args.output_files), format='pdf')    
     plt.close()        
     plt.figure(figsize=(6,6))
-    plt.plot(t,rec_distr(t,*result.x[1+hazard_inf_par:]), color='b')
+    plt.plot(t,rec_distr(t,*parameters[1+hazard_inf_par:]), color='b')
     plt.xlabel('time')
     plt.ylabel('pdf')
-    plt.title("Infectious period distribution, params:{}".format(result.x[1+hazard_inf_par:]))    
+    plt.title("Infectious period distribution, params:{}".format(parameters[1+hazard_inf_par:]))    
     plt.xlim(0)
     plt.ylim(0)    
-    plt.savefig("infectious_time_fig_{}.pdf".format(args.output_files), format='pdf')    
+    plt.savefig("{}_infectious_time_fig.pdf".format(args.output_files), format='pdf')    
     plt.close()        
     
     

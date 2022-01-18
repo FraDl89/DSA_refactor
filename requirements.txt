@@ -4,4 +4,4 @@ pyDOE
 networkx
 matplotlib
 typing
-pyswarm
+pyswarms

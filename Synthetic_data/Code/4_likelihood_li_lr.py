@@ -74,7 +74,7 @@ if __name__ == "__main__":
                           T=T_f, infect_times=infection_times,recov_times=recovery_times,hazard_inf_par=1,rec_parms=2)
     result = ll.minimize_likelihood(np.array([5e-4,0.01,2,1]), np.array([1e-2,2,20,15]))
     
-    print(*result.x)
+    print(result[0])
 
     
         

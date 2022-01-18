@@ -75,10 +75,12 @@ if __name__=="__main__":
          tol = 1e-10
          #Basically: use de l'hopital when the ratio becomes 0/0
          #Otherwise go with definition. This regularises a lot the numerics
-         
-         x = np.where(stats.gamma.cdf(u,a=a,scale=scale)>1-tol,
-                      1/scale - (a-1)/u,
-                      stats.gamma.pdf(u,a=a,scale=scale)/(1- stats.gamma.cdf(u,a=a,scale=scale)))
+         x=np.zeros_like(u)
+         bad_indexes=stats.gamma.cdf(u,a=a,scale=scale)>1-tol
+         x[bad_indexes]=1/scale - (a-1)/u[bad_indexes]
+         x[~bad_indexes]= stats.gamma.pdf(u[~bad_indexes],a=a,scale=scale)/(1- stats.gamma.cdf(u[~bad_indexes],a=a,scale=scale))
+
+ 
          return x
          
     def rec_distr(u, *recovDistParams):
@@ -104,13 +106,13 @@ if __name__=="__main__":
     ll=log_likelihood_models(grids,hazard_inf=inf_distr,hazard_rec=rec_haz, rec_distr = rec_distr, 
                               T=T_f, infect_times=time_extended, hazard_inf_par=2,rec_parms=2)
 
-    result = ll.minimize_likelihood(np.array([5e-4,2.1,2,2,1]), np.array([1e-2,10,10,9, 21]))
+    result = ll.minimize_likelihood(np.array([5e-4,2.1,2,2,1]), np.array([1e-2,10,10,9, 21]), maxiter=100,swarmsize=500)
     print(result)
     #result expected:
     #result_x=[8.23024809e-03, 2.13623063e+00, 4.75098558e+00, 4.97839683e+00,1.08327439e+01]
     plt.figure()
     
-    result_x=result.x
+    result_x=result[0]
 
     pde= SIR_PDEroutine(result_x[0], CIdist=inf_distr, CIdistParms=[result_x[1], result_x[2]],\
                               recovDist=rec_haz, recovDistParms=[result_x[3],result_x[4]],\
