@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Dec 20 14:06:27 2021
-
-@author: fra
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See LICENCE file for details
 """
 
-
-import numpy as np
 import scipy.stats as stats
 import random
 import sys

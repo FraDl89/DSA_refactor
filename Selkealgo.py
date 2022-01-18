@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Jul  1 15:18:54 2020
 
-@author: ld288
+"""
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See LICENCE file for details
 """
 
 import numpy as np

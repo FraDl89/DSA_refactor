@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri May  7 09:15:37 2021
-
-@author: fra
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See Licence file for details.
 """
 import numpy as np
 import scipy.stats as stats

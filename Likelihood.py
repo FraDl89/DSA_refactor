@@ -1,7 +1,6 @@
 """
-Created on Thu Sep  3 09:16:00 2020
-
-@author: ld288
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See LICENCE file for details.
 """
 import numpy as np
 from scipy.interpolate import interp1d

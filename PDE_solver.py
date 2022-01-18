@@ -1,4 +1,7 @@
-
+'''
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See LICENCE file for details.
+'''  
 
 import numpy as np
 import scipy.stats as stats

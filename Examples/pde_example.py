@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 17 23:10:37 2022
 
-@author: fra
+"""
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See Licence file for details.
 """
 
 import argparse

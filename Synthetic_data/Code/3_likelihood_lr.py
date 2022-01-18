@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Oct 13 13:48:27 2020
-
-@author: francesco
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See Licence file for details.
 """
 import numpy as np
 import sys

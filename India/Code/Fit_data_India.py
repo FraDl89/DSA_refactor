@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Feb 23 16:24:28 2021
-
-@author: fra
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See LICENCE file for details
 """
+
 
 
 import numpy as np

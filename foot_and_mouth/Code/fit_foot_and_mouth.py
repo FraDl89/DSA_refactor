@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Feb  1 10:30:09 2021
-
-@author: fra
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See Licence file for details.
 """
-
-
 
 import numpy as np
 import matplotlib.pyplot as plt

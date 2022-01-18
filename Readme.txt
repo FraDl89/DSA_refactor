@@ -53,8 +53,4 @@ The code to reproduce numerics can be found under the folders named Synthetic_da
 Figures in the paper can be reproduced by running the codes inside the Figures folder in R.
 
 
-This repo is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-If you use or take inspiration from the code of this repo, please cite the paper "Dynamic Survival Analysis for non-Markovian Epidemic Models"
+If you use or take inspiration from the code of this repo, please cite the paper "Dynamic Survival Analysis for non-Markovian Epidemic Models", by Di Lauro, KhudaBukhsh, Kiss, Kenah, Rempala. See also the Licence file.

@@ -1,3 +1,8 @@
+"""
+Copyright 2020-2022 Francesco Di Lauro. All Rights Reserved.
+See LICENCE file for details
+"""
+
 import os as os
 import pandas as pd
 import matplotlib.pyplot as plt
