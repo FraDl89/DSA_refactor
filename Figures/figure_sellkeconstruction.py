@@ -118,7 +118,7 @@ if __name__=="__main__":
     ax2.set_xticks([0,2,4])
     ax2.set_yticks([0,0.3,0.6])
     ax2.tick_params(axis='both', which='major', labelsize=10)
-    ax2.set_title("Recovery Distribution", fontsize=9)
+    ax2.set_title("Infectious period distribution", fontsize=9)
     import seaborn as sns
     sns.despine()
     

@@ -72,7 +72,7 @@ ggplot(data.frame(x = c(x_lower, x_upper)), aes(x = x)) + xlim(x_lower, x_upper)
         panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = c(0.8,0.6))+
   scale_y_continuous(expand = expansion(mult = c(0, .1)))+
   scale_x_continuous(expand = expansion(mult = c(0, .1)), breaks = scales::pretty_breaks(n = 5))+
-  scale_colour_manual(breaks=c("orange","blue"), values=c("#0C7EF5","#F5A318"),labels=c("Infectiousness", "Recovery time"), name="Distributions")
+  scale_colour_manual(breaks=c("orange","blue"), values=c("#0C7EF5","#F5A318"),labels=c("Contact Interval", "Infectious Period"), name="Distributions")
 
 
 
