@@ -30,22 +30,23 @@ if __name__=="__main__":
     processed_time_cases = '../Data/processed_time_daily_cases.txt'  #Folder with FMD data
     
     #Cases we are interested in
-    plt.figure()        
+    #plt.figure()        
     day,cases = np.loadtxt(processed_time_cases, delimiter='  ',unpack=True)    
     
-    plt.scatter(day,cases, color='black', marker='x')
+    #plt.scatter(day,cases, color='black', marker='x')
 
-    plt.xlabel(r'$t$ (day)')
-    plt.ylabel(r'cases')
+    #plt.xlabel(r'$t$ (day)')
+    #plt.ylabel(r'cases')
     
     
     day = day.astype(int)
     
-    T_f = 80
+    T_f = 40
     day=day[:T_f]
     cases = cases[:T_f]
 
-    plt.scatter(day,cases, color='red', marker='x')
+
+    #plt.scatter(day,cases, color='red', marker='x')
     
     day = day-day[0] #make time begin from day 0
     
@@ -66,6 +67,7 @@ if __name__=="__main__":
     
  
     #Gamma
+    '''
     def rec_haz(u, *recovDistParams):    
          a = float(recovDistParams[0])**2/float(recovDistParams[1])
          scale = float(recovDistParams[1])/float(recovDistParams[0]) 
@@ -96,14 +98,26 @@ if __name__=="__main__":
            scale=CIdistParms[1]
            return shape/scale*(u/scale)**(shape-1)
    
+    '''
+    def rec_haz(u,*recovDistParams):
+        rate=float(recovDistParams[0])
+        return rate*np.ones_like(u)
 
+    def rec_distr(u,*recovDistParams):
+        rate=float(recovDistParams[0])
+        return stats.expon.pdf(u,scale=1/rate)
+    def inf_distr(u,*CIdistParms):
+        rate=float(CIdistParms[0])
+        return rate*np.ones_like(u)
+        
 
     
     grids=1600
     ll=log_likelihood_models(grids,hazard_inf=inf_distr,hazard_rec=rec_haz, rec_distr = rec_distr, 
-                              T=T_f, infect_times=time_extended, hazard_inf_par=2,rec_parms=2)
+                              T=T_f, infect_times=time_extended, hazard_inf_par=1,rec_parms=1)
 
-    result = ll.minimize_likelihood(np.array([5e-4,2.1,2,2,1]), np.array([1e-2,10,10,9, 21]), maxiter=100,swarmsize=500)
+    #result = ll.minimize_likelihood(np.array([5e-4,2.1,2,2,1]), np.array([1e-2,10,10,9, 21]), maxiter=200,swarmsize=150)
+    result = ll.minimize_likelihood(np.array([1e-4,0.1,0.05]),np.array([1e-2,0.9,0.9]),maxiter=200,swarmsize=150)
     print(result)
     #result expected:
     #result_x=[8.23024809e-03, 2.13623063e+00, 4.75098558e+00, 4.97839683e+00,1.08327439e+01]
@@ -111,16 +125,24 @@ if __name__=="__main__":
     
     result_x=result[0]
 
-    pde= SIR_PDEroutine(result_x[0], CIdist=inf_distr, CIdistParms=[result_x[1], result_x[2]],\
-                              recovDist=rec_haz, recovDistParms=[result_x[3],result_x[4]],\
-                                  nTgrid=grids, nUgrid=grids, T=day[-1])
-    
+
+        
+
+    #pde= SIR_PDEroutine(result_x[0], CIdist=inf_distr, CIdistParms=[result_x[1], result_x[2]],\
+    #                          recovDist=rec_haz, recovDistParms=[result_x[3],result_x[4]],\
+    #                              nTgrid=grids, nUgrid=grids, T=T_f)
+    pde= SIR_PDEroutine(result_x[0], CIdist=inf_distr, CIdistParms=[result_x[1]],\
+                             recovDist=rec_haz, recovDistParms=[result_x[2]],\
+                                 nTgrid=5000, nUgrid=5000, T=T_f)    
     initialcondition1=np.exp(-pde.tgrids)
     
     X,Y=pde.finDiffUpdate(initialcond=initialcondition1)
+ 
+    N_eff = sum(cases)/(1-X[-1])
+    rho_0 = result_x[0]*N_eff
     
     #Plots: I(t)
-    
+    '''
     plt.plot(pde.tgrids,Y, color='blue')
     plt.xlabel('time')
     plt.ylabel('cases')   
@@ -129,6 +151,7 @@ if __name__=="__main__":
     plt.figure()
     x = np.linspace(0,24,grids)
     plt.plot(x,rec_distr(x,*[result_x[3],result_x[4]]), label = 'Gamma: mean %.3f, var %.3f)'%(result_x[3],result_x[4]))
+    #plt.plot(x,rec_distr(x,*[result_x[2]]), label = 'exponential: rate %.2f'%(result_x[2]))
     plt.title("Foot and mouth")
     plt.xlabel('time')
     plt.legend()
@@ -138,9 +161,10 @@ if __name__=="__main__":
     
     plt.figure()
     plt.plot(x,stats.weibull_min.pdf(x,result_x[1], scale=result_x[2]), label = 'Weib(%.3f, %.3f)'%(result_x[1],result_x[2]))
+    #plt.plot(x,stats.expon.pdf(x,scale=1/result_x[1]),label = 'exponential: rate %.2f'%(result_x[1]))
     plt.xlabel('time')
     plt.ylabel('Infection pdf')
-      
+    '''
  
     #Plots: f_t
     from scipy.stats import gaussian_kde
@@ -159,12 +183,14 @@ if __name__=="__main__":
     #N_eff and initial number of infected
     N_eff = sum(cases)/(1-X[-1])
     rho_0 = result_x[0]*N_eff
-    print(rho_0)
-    
+
+    np.savetxt('Results/estimates_FMD_exp_exp_T_f_%d.txt'%T_f, np.c_[result_x[0],result_x[1],result_x[2],rho_0,N_eff, sum(cases)])
+    #np.savetxt('Results/estimates_FMD_Weib_Gamma_T_f_%d.txt'%T_f, np.c_[result_x[0],result_x[1],result_x[2],result_x[3],result_x[4],rho_0,N_eff, sum(cases)])    
     
     #np.savetxt('fit_empirical_density_foot_and_mouth.txt', np.c_(pde.tgrids[1:],empirical_density))
     #np.savetxt('empirical_density_foot_and_mouth.txt', np.c_(day,denseval))
-
+    
+  
     
     '''
 
